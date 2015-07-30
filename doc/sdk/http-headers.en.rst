@@ -116,7 +116,7 @@ to the object (``TSMLoc``) and the marshal buffer containing the object
    
 The figure above shows the following:
 
--  The marshal buffer containing the HTTP request, ``reqest_bufp``
+-  The marshal buffer containing the HTTP request, ``request_bufp``
 
 -  ``TSMLoc`` location pointer for the HTTP header (``http_hdr_loc``)
 
