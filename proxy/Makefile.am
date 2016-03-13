@@ -23,7 +23,8 @@ bin_PROGRAMS = \
   traffic_server \
   traffic_logcat \
   traffic_logstats \
-  traffic_sac
+  traffic_sac \
+  traffic_dyc
 
 noinst_PROGRAMS = \
   test_xml_parser
@@ -272,6 +273,122 @@ traffic_logstats_LDADD = \
   $(top_builddir)/lib/ts/libtsutil.la \
   @LIBRESOLV@ @LIBPCRE@ @LIBTCL@ @HWLOC_LIBS@ \
   @LIBEXPAT@ @LIBPROFILER@ -lm
+
+traffic_dyc_SOURCES = \
+  AbstractBuffer.cc \
+  AbstractBuffer.h \
+  CacheControl.cc \
+  CacheControl.h \
+  ControlBase.cc \
+  ControlBase.h \
+  ControlMatcher.cc \
+  ControlMatcher.h \
+  CoreUtils.cc \
+  CoreUtils.h \
+  Crash.cc \
+  DynamicStats.h \
+  EventName.cc \
+  FetchSM.cc \
+  HttpTransStats.h \
+  ICP.cc \
+  ICP.h \
+  ICPConfig.cc \
+  ICPProcessor.cc \
+  ICPProcessor.h \
+  ICPStats.cc \
+  ICPevents.h \
+  ICPlog.h \
+  IPAllow.cc \
+  IPAllow.h \
+  InkAPI.cc \
+  InkAPIInternal.h \
+  InkIOCoreAPI.cc \
+  MyMain.cc \
+  MyMain.h \
+  Main.h \
+  ParentConsistentHash.cc \
+  ParentConsistentHash.h \
+  ParentRoundRobin.cc \
+  ParentRoundRobin.h \
+  ParentSelection.cc \
+  ParentSelection.h \
+  Plugin.cc \
+  Plugin.h \
+  PluginVC.cc \
+  PluginVC.h \
+  ProtocolProbeSessionAccept.cc \
+  ProtocolProbeSessionAccept.h \
+  ProxyClientSession.cc \
+  ProxyClientSession.h \
+  ReverseProxy.cc \
+  ReverseProxy.h \
+  SocksProxy.cc \
+  StatPages.cc \
+  StatPages.h \
+  StatSystem.cc \
+  StatSystem.h \
+  Transform.cc \
+  Transform.h \
+  TransformInternal.h
+
+if BUILD_TESTS
+traffic_dyc_SOURCES +=  \
+  InkAPITest.cc  \
+  RegressionSM.h \
+  RegressionSM.cc
+endif
+
+traffic_dyc_LDFLAGS = $(AM_LDFLAGS)
+
+if BUILD_STATIC_PROXY
+traffic_dyc_LDFLAGS += -all-static
+endif
+traffic_dyc_LDADD = \
+  http/libhttp.a \
+  http2/libhttp2.a \
+  spdy/libspdy.a \
+  http/remap/libhttp_remap.a \
+  congest/libCongestionControl.a \
+  logging/liblogging.a \
+  logging/liblogcollation.a \
+  hdrs/libhdrs.a  \
+  shared/liberror.a  \
+  shared/libdiagsconfig.a  \
+  shared/libxml.a \
+  $(top_builddir)/mgmt/libmgmt_p.la \
+  $(top_builddir)/iocore/utils/libinkutils.a \
+  $(top_builddir)/iocore/cluster/libinkcluster.a \
+  $(top_builddir)/iocore/dns/libinkdns.a \
+  $(top_builddir)/iocore/hostdb/libinkhostdb.a \
+  $(top_builddir)/iocore/dns/libinkdns.a \
+  $(top_builddir)/iocore/cluster/libinkcluster.a \
+  $(top_builddir)/iocore/cache/libinkcache.a \
+  $(top_builddir)/iocore/aio/libinkaio.a \
+  $(top_builddir)/lib/ts/libtsutil.la \
+  $(top_builddir)/iocore/net/libinknet.a \
+  $(top_builddir)/iocore/eventsystem/libinkevent.a \
+  $(top_builddir)/lib/records/librecords_p.a \
+  $(top_builddir)/iocore/eventsystem/libinkevent.a \
+  @HWLOC_LIBS@ \
+  @LIBPCRE@ \
+  @LIBTCL@ \
+  @LIBEXPAT@ \
+  @LIBCAP@ \
+  @LIBRESOLV@ \
+  @LIBZ@ \
+  @LIBLZMA@ \
+  @LIBPROFILER@ \
+  @SPDYLAY_LIBS@ \
+  @OPENSSL_LIBS@ \
+  -lm
+
+if BUILD_LUAJIT
+  traffic_dyc_LDADD += $(LUAJIT:%=$(top_builddir)/lib/luajit/src/%)
+
+  # On Darwin LuaJIT requires magic link options, otherwise it will crash in luaL_openlibs() at startup. See
+  # http://luajit.org/install.html.
+  traffic_dyc_LDFLAGS += $(LUAJIT_LDFLAGS)
+endif
 
 traffic_sac_SOURCES = \
   sac.cc \
